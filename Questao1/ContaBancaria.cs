@@ -2,12 +2,12 @@
 
 namespace Questao1
 {
-    class ContaBancaria
+    internal class ContaBancaria
     {
         private const double Taxa = 3.50D;
         private readonly CultureInfo _outputCulture;
 
-        public ContaBancaria(int numero, string titular, double depositoInicial = 0.00D)
+        internal ContaBancaria(int numero, string titular, double depositoInicial = 0.00D)
         {
             Numero = numero;
             Titular = titular;
@@ -17,8 +17,8 @@ namespace Questao1
             _outputCulture.NumberFormat.CurrencyNegativePattern = 1;
         }
 
-        public int Numero { get; init; }
-        public string Titular { get; set; }
+        protected int Numero { get; init; }
+        protected string Titular { get; set; }
         private double Saldo { get; set; }
 
         public override string ToString()
