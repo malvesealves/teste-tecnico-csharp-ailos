@@ -14,10 +14,11 @@ namespace Questao5.Infrastructure.Sqlite
 
         public void Setup()
         {
-            using var connection = new SqliteConnection(databaseConfig.Name);
+            using SqliteConnection connection = new(databaseConfig.Name);
 
-            var table = connection.Query<string>("SELECT name FROM sqlite_master WHERE type='table' AND (name = 'contacorrente' or name = 'movimento' or name = 'idempotencia');");
-            var tableName = table.FirstOrDefault();
+            IEnumerable<string> table = connection.Query<string>("SELECT name FROM sqlite_master WHERE type='table' AND (name = 'contacorrente' or name = 'movimento' or name = 'idempotencia');");
+            string? tableName = table.FirstOrDefault();
+            
             if (!string.IsNullOrEmpty(tableName) && (tableName == "contacorrente" || tableName == "movimento" || tableName == "idempotencia"))
                 return;
 

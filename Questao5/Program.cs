@@ -9,6 +9,8 @@ builder.Services.AddControllers();
 
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 
+builder.Services.AddLogging(builder => builder.AddConsole());
+
 // sqlite
 builder.Services.AddSingleton(new DatabaseConfig { Name = builder.Configuration.GetValue<string>("DatabaseName", "Data Source=database.sqlite") });
 builder.Services.AddSingleton<IDatabaseBootstrap, DatabaseBootstrap>();
@@ -41,5 +43,3 @@ app.Run();
 
 // Informações úteis:
 // Tipos do Sqlite - https://www.sqlite.org/datatype3.html
-
-
