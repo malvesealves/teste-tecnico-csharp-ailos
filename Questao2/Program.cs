@@ -71,12 +71,12 @@ public class Program
             totalGoals += await GetScoredGoalsMatches(urlTeam1, team1GoalsResponse, true);
 
         if (team2GoalsResponse is not null)
-            totalGoals += await GetScoredGoalsMatches(urlTeam2, team2GoalsResponse, false);
+            totalGoals += await GetScoredGoalsMatches(urlTeam2, team2GoalsResponse);
 
         return totalGoals;
     }
 
-    internal static async Task<int> GetScoredGoalsMatches(StringBuilder url, FootballMatchesResult originalResponse, bool homeGame)
+    internal static async Task<int> GetScoredGoalsMatches(StringBuilder url, FootballMatchesResult originalResponse, bool homeGame = false)
     {
         int totalGoals = 0;
 
