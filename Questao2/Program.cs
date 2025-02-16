@@ -59,8 +59,8 @@ public class Program
 
         await Task.WhenAll(team1GoalsResponseTask, team2GoalsResponseTask);
 
-        FootballMatchesResult? team1GoalsResponse = await team1GoalsResponseTask;
-        FootballMatchesResult? team2GoalsResponse = await team2GoalsResponseTask;
+        FootballMatchesResult? team1GoalsResponse = team1GoalsResponseTask.Result;
+        FootballMatchesResult? team2GoalsResponse = team2GoalsResponseTask.Result;
 
         urlTeam1.Append("&page=");
         urlTeam2.Append("&page=");
