@@ -1,27 +1,26 @@
-﻿using System.ComponentModel;
+﻿using Questao5.Domain.Enumerators;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Questao5.Domain.Entities
 {
     [Table("contacorrente")]
-    public class ContaCorrente
+    public sealed class Account
     {
         [Key]
         [Column("idcontacorrente")]
-        public string IdContaCorrente { get; set; }
-        
+        public string AccountId { get; set; }
+
         [Required]
         [Column("numero")]
-        public long Numero { get; set; }
-        
+        public long Number { get; set; }
+
         [Required]
         [Column("nome")]
-        public string Nome { get; set; }
-        
+        public string Name { get; set; }
+
         [Required]
-        [DefaultValue(false)]
         [Column("ativo")]
-        public bool Ativo { get; set; }
+        public AccountStatus Active { get; set; }
     }
 }

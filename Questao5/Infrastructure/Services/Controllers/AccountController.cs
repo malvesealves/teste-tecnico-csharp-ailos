@@ -1,52 +1,56 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Questao5.Application.Commands.Requests;
 
 namespace Questao5.Infrastructure.Services.Controllers
 {
     /// <summary>
-    /// Controller para conta corrente
+    /// Controller para lidar com requisições que envolvem conta corrente
     /// </summary>
     [ApiController]
     [Route("[controller]")]
-    public class ContaCorrenteController : ControllerBase
-    {      
-        private readonly ILogger<ContaCorrenteController> _logger;
+    public class AccountController : ControllerBase
+    {
+        private readonly IMediator _mediator;
 
         /// <summary>
         /// Construtor
         /// </summary>
-        /// <param name="logger"></param>
-        public ContaCorrenteController(ILogger<ContaCorrenteController> logger)
+        /// <param name="mediator">Injeção do MediatR</param>
+        public AccountController(IMediator mediator)
         {
-            _logger = logger;
+            _mediator = mediator;
         }
 
         /// <summary>
-        /// 
+        /// Serviço para processar movimentação de uma conta corrente
         /// </summary>
         /// <returns></returns>
         [HttpPost("movimentacao")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Movimentacao([FromBody] object data)
+        public IActionResult Movement([FromHeader(Name = "Idempotency-Key")] string idempotencyKey, [FromBody] CreateMovementRequest command)
         {
-            _logger.LogInformation("");
+            if (string.IsNullOrEmpty(idempotencyKey))
+                return BadRequest("Idempotency-Key header is required.");
+
+            var teste = _mediator.Send(command);
+
             int id = 0;
             id++;
             return id < 0 ? BadRequest() : Ok(id);
         }
 
         /// <summary>
-        /// 
+        /// Serviço para consultar saldo de uma conta corrente
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("saldo/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Saldo(int id)
-        {
-            _logger.LogInformation("");
+        public IActionResult Balance(int id)
+        {            
             return id < 0 ? BadRequest() : Ok(id);
         }
     }

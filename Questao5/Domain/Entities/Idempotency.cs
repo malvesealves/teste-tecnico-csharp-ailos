@@ -4,18 +4,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Questao5.Domain.Entities
 {
     [Table("idempotencia")]
-    public class Idempotencia
+    public sealed class Idempotency
     {
         [Key]
         [Column("chave_idempotencia")]
-        public string ChaveIdempotencia { get; set; }
+        public string IdempotencyKey { get; set; }
 
         [StringLength(1000)]
         [Column("requisicao")]
-        public string Requisicao { get; set; }
+        public string Request { get; set; }
 
         [StringLength(1000)]
         [Column("resultado")]
-        public string Resultado { get; set; }
+        public string Result { get; set; }
     }
 }

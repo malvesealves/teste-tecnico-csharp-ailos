@@ -1,4 +1,5 @@
 using MediatR;
+using Questao5.Extensions;
 using Questao5.Infrastructure.Sqlite;
 using System.Reflection;
 
@@ -7,9 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
-builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
+builder.Services.ConfigureApplicationHandlers();
+builder.Services.ConfigureInfrastructureHandlers();
 
-builder.Services.AddLogging(builder => builder.AddConsole());
+builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 
 // sqlite
 builder.Services.AddSingleton(new DatabaseConfig { Name = builder.Configuration.GetValue<string>("DatabaseName", "Data Source=database.sqlite") });

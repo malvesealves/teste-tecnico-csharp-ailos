@@ -1,32 +1,33 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Questao5.Domain.Enumerators;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Questao5.Domain.Entities
 {
     [Table("movimento")]
-    public class Movimento
+    public sealed class Movement
     {
         [Key]
         [Column("idmovimento")]
-        public string IdMovimento { get; set; }
+        public string MovementId { get; set; }
 
         [Required]
         [ForeignKey("idcontacorrente")]
         [Column("idcontacorrente")]
-        public string IdContaCorrente { get; set; }
+        public string AccountId { get; set; }
 
         [Required]
         [Column("datamovimento")]
-        public string DataMovimento { get; set; }
+        public string MovementDate { get; set; }
 
         [Required]
         [MaxLength(1)]
         [RegularExpression("C|D")]
         [Column("tipomovimento")]
-        public string TipoMovimento { get; set; }
+        public MovementType MovementType { get; set; }
         
         [Required]
         [Column("valor")]
-        public double Valor { get; set; }
+        public double Value { get; set; }
     }
 }
