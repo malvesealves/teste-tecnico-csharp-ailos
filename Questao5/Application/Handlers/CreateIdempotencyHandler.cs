@@ -6,9 +6,9 @@ namespace Questao5.Application.Handlers
 {
     public class CreateIdempotencyHandler : IRequestHandler<CreateIdempotencyRequest, CreateIdempotencyResponse>
     {
-        private readonly Infrastructure.Database.CommandStore.Handlers.CreateIdempotencyHandler _commandHandler;
+        private readonly Infrastructure.Database.Handlers.CreateIdempotencyHandler _commandHandler;
 
-        public CreateIdempotencyHandler(Infrastructure.Database.CommandStore.Handlers.CreateIdempotencyHandler commandHandler)
+        public CreateIdempotencyHandler(Infrastructure.Database.Handlers.CreateIdempotencyHandler commandHandler)
         {
             _commandHandler = commandHandler;
         }

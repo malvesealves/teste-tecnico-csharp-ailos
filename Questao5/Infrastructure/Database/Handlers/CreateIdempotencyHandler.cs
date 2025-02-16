@@ -4,7 +4,7 @@ using Questao5.Infrastructure.Database.CommandStore.Requests;
 using Questao5.Infrastructure.Database.CommandStore.Responses;
 using Questao5.Infrastructure.Sqlite;
 
-namespace Questao5.Infrastructure.Database.CommandStore.Handlers
+namespace Questao5.Infrastructure.Database.Handlers
 {
     public class CreateIdempotencyHandler
     {
@@ -17,7 +17,7 @@ namespace Questao5.Infrastructure.Database.CommandStore.Handlers
 
         public async Task<CreateIdempotencyResponse> HandleAsync(CreateIdempotencyRequest request)
         {
-            string command = "INSERT INTO Orders (CustomerName, OrderDate, TotalAmount) OUTPUT INSERTED.Id VALUES (@CustomerName, @OrderDate, @TotalAmount)";
+            string command = "INSERT INTO idempotencia (chave_idempotencia, requisicao, resultado) OUTPUT INSERTED.chave_idempotencia VALUES (@IdempotencyKey, @Request, @Response)";
 
             using SqliteConnection connection = new(_config.Name);
             

@@ -7,9 +7,9 @@ namespace Questao5.Application.Queries.Requests
     public sealed class GetBalanceRequest : IRequest<GetBalanceResponse>
     {
         [Required]
-        public int AccountId { get; set; }    
+        public Guid AccountId { get; set; }    
 
-        public GetBalanceRequest(int accountId)
+        public GetBalanceRequest(Guid accountId)
         {
             AccountId = accountId;
         }

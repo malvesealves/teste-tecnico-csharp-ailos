@@ -1,6 +1,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Questao5.Application.Commands.Requests;
+using Questao5.Application.Commands.Responses;
+using Questao5.Application.Queries.Requests;
 
 namespace Questao5.Infrastructure.Services.Controllers
 {
@@ -29,12 +31,32 @@ namespace Questao5.Infrastructure.Services.Controllers
         [HttpPost("movimentacao")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Movement([FromHeader(Name = "Idempotency-Key")] string idempotencyKey, [FromBody] CreateMovementRequest command)
+        public async Task<IActionResult> Movement([FromHeader(Name = "Idempotency-Key")] Guid idempotencyKey, [FromBody] CreateMovementRequest command)
         {
-            if (string.IsNullOrEmpty(idempotencyKey))
+            if (ModelState.IsValid)
+            {
+
+            }
+
+            if (idempotencyKey == Guid.Empty)
                 return BadRequest("Idempotency-Key header is required.");
 
-            var teste = _mediator.Send(command);
+            GetIdempotencyRequest idempotencyRequest = new(idempotencyKey);
+
+            Application.Queries.Responses.GetIdempotencyResponse idempotencyResponse = await _mediator.Send(idempotencyRequest);
+
+            if (idempotencyResponse is not null)
+                return Ok(new CreateMovementResponse(int.Parse(idempotencyResponse.Response)));
+
+            CreateMovementResponse response = await _mediator.Send(command);
+
+            var createIdempotency = new CreateIdempotencyRequest()
+            {
+                IdempotencyKey = new Guid(),
+                //Request =
+            };
+
+            var teste = await _mediator.Send(createIdempotency);
 
             int id = 0;
             id++;
@@ -49,9 +71,15 @@ namespace Questao5.Infrastructure.Services.Controllers
         [HttpGet("saldo/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Balance(int id)
-        {            
-            return id < 0 ? BadRequest() : Ok(id);
+        public async Task<IActionResult> Balance(string id)
+        {
+            if (ModelState.IsValid)
+            {
+                GetBalanceRequest request = new(new Guid(id));
+                return Ok(await _mediator.Send(request));
+            }
+
+            return BadRequest();
         }
     }
 }

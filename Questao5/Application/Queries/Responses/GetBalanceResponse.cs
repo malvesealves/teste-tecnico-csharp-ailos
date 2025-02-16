@@ -2,9 +2,9 @@
 {
     public sealed class GetBalanceResponse
     {
-        public string AccountId { get; set; }
+        public int Number { get; set; }
         public string Name { get; set; }
-        public DateTime QueryDateTime { get; set; }
+        public DateTimeOffset QueryDateTime { get; set; }
         public double Balance { get; set; }
     }
 }

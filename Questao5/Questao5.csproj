@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Infrastructure\Database\QueryStore\Handlers\" />
+    <Folder Include="Exceptions\" />
   </ItemGroup>
 
 </Project>

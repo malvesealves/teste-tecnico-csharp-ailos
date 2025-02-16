@@ -1,4 +1,5 @@
 using MediatR;
+using Questao5.Domain.Language;
 using Questao5.Extensions;
 using Questao5.Infrastructure.Sqlite;
 using System.Reflection;
@@ -35,6 +36,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+//app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // sqlite
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
