@@ -2,7 +2,7 @@
 
 namespace Questao2
 {
-    internal class FootballMatchesResult
+    public sealed class FootballMatchesResult
     {
         [JsonPropertyName("page")]
         public short Page { get; set; }
@@ -20,7 +20,7 @@ namespace Questao2
         public FootballMatchesData[] Data { get; set; } = Array.Empty<FootballMatchesData>();
     }
 
-    internal class FootballMatchesData
+    public sealed class FootballMatchesData
     {
         [JsonPropertyName("competition")]
         public string? Competition { get; set; }

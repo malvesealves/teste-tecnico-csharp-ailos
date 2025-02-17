@@ -7,26 +7,21 @@ public class Program
 {
     private static readonly HttpClient client = new();
 
-    public static void Main()
+    public static async Task Main()
     {
         string teamName = "Paris Saint-Germain";
         int year = 2013;
+
         int totalGoals = 0;
 
-        Task.Run(async () =>
-        {
-            totalGoals = await GetTotalScoredGoals(teamName, year);
-        }).GetAwaiter().GetResult();
+        totalGoals = await GetTotalScoredGoals(teamName, year);
 
         Console.WriteLine("Team " + teamName + " scored " + totalGoals.ToString() + " goals in " + year);
 
         teamName = "Chelsea";
         year = 2014;
 
-        Task.Run(async () =>
-        {
-            totalGoals = await GetTotalScoredGoals(teamName, year);
-        }).GetAwaiter().GetResult();
+        totalGoals = await GetTotalScoredGoals(teamName, year);
 
         Console.WriteLine("Team " + teamName + " scored " + totalGoals.ToString() + " goals in " + year);
 
@@ -34,8 +29,8 @@ public class Program
         // Team Paris Saint - Germain scored 109 goals in 2013
         // Team Chelsea scored 92 goals in 2014
     }
-   
-    internal static async Task<FootballMatchesResult?> CallURL(string url)
+
+    public static async Task<FootballMatchesResult?> CallURL(string url)
     {
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls;
         client.DefaultRequestHeaders.Accept.Clear();
@@ -43,7 +38,7 @@ public class Program
         return await client.GetFromJsonAsync<FootballMatchesResult>(url);
     }
 
-    internal static async Task<int> GetTotalScoredGoals(string team, int year)
+    public static async Task<int> GetTotalScoredGoals(string team, int year)
     {
         StringBuilder urlTeam1 = new(@"https://jsonmock.hackerrank.com/api/football_matches");
 
@@ -76,7 +71,7 @@ public class Program
         return totalGoals;
     }
 
-    internal static async Task<int> GetScoredGoalsMatches(StringBuilder url, FootballMatchesResult originalResponse, bool homeGame = false)
+    public static async Task<int> GetScoredGoalsMatches(StringBuilder url, FootballMatchesResult originalResponse, bool homeGame = false)
     {
         int totalGoals = 0;
 
@@ -108,7 +103,7 @@ public class Program
                             {
                                 _ = int.TryParse(result.Data[i].Team2Goals, out int goals2);
                                 totalGoals += goals2;
-                            }                            
+                            }
                         }
                     }
                 }
@@ -127,5 +122,5 @@ public class Program
         }
 
         return totalGoals;
-    }    
+    }
 }
