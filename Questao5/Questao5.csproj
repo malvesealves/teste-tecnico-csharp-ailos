@@ -9,11 +9,9 @@
   <ItemGroup>
     <Compile Remove="Application\Handlers\AccountCommandHandler.cs" />
     <Compile Remove="Application\Handlers\AccountQueryHandler.cs" />
-    <Compile Remove="Application\Handlers\CreateIdempotencyHandler.cs" />
     <Compile Remove="Application\Handlers\GetBalanceHandler.cs" />
     <Compile Remove="Infrastructure\Database\Handlers\AccountCommandHandler.cs" />
     <Compile Remove="Infrastructure\Database\Handlers\AccountQueryHandler.cs" />
-    <Compile Remove="Infrastructure\Database\Handlers\CreateIdempotencyHandler.cs" />
   </ItemGroup>
 
   <ItemGroup>

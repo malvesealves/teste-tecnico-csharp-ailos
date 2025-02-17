@@ -18,14 +18,23 @@ namespace Questao5.Infrastructure.Database.Handlers
 
         public async Task<CreateIdempotencyResponse> Handle(CreateIdempotencyRequest request, CancellationToken token)
         {
-            string command = "INSERT INTO idempotencia (chave_idempotencia, requisicao, resultado) OUTPUT INSERTED.chave_idempotencia VALUES (@IdempotencyKey, @Request, @Response)";
+            string command = @"INSERT INTO idempotencia (chave_idempotencia, requisicao, resultado) 
+                               VALUES (@IdempotencyKey, @Request, @Response)";
+
+            Dictionary<string, object> dictionary = new()
+            {
+                { "@IdempotencyKey", request.IdempotencyKey },
+                { "@Request", request.Request },
+                { "@Response", request.Response }
+            };
+
+            DynamicParameters parameters = new(dictionary);
 
             using SqliteConnection connection = new(_config.Name);
 
-            await connection.ExecuteAsync(command, request);
+            await connection.ExecuteAsync(command, parameters);
 
-            // TODO:
-            return new CreateIdempotencyResponse(new Guid());
+            return new CreateIdempotencyResponse(request.IdempotencyKey);
         }
     }
 }

@@ -22,5 +22,13 @@ namespace Questao5.Domain.Entities
         [Required]
         [Column("ativo")]
         public AccountStatus Active { get; set; }
+
+        public Account(string accountId, long number, string name, AccountStatus active)
+        {
+            AccountId = accountId;
+            Number = number;
+            Name = name;
+            Active = active;
+        }
     }
 }

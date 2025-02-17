@@ -2,10 +2,11 @@
 {
     public static class Messages
     {
-        #region Transactions
+        #region Transaction
 
         #endregion
         public const string Transaction_IdempotencyKeyRequired = "Cabeçalho Idempotency-Key é obrigatório";
+        public const string Transaction_InvalidIdempotency = "Chave de idempotência inválida";
 
         public const string Transaction_Succeeded = "Movimentação realizada com sucesso";
 

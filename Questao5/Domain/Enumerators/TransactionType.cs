@@ -1,8 +1,12 @@
-﻿namespace Questao5.Domain.Enumerators
+﻿using System.ComponentModel;
+
+namespace Questao5.Domain.Enumerators
 {
     public enum TransactionType
     {
-        Credito = 'C',
-        Debito = 'D'
+        [Description("Crédito")]
+        C,
+        [Description("Débito")]
+        D
     }
 }

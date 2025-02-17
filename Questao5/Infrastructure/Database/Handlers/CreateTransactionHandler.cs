@@ -24,7 +24,7 @@ namespace Questao5.Infrastructure.Database.Handlers
 
             Dictionary<string, object> dictionary = new()
             {
-                { "@IdMovimento", Guid.NewGuid() },
+                { "@IdMovimento", request.TransactionId },
                 { "@IdContaCorrente", request.AccountId },
                 { "@DataMovimento", DateTimeOffset.UtcNow.ToString("d") },
                 { "@TipoMovimento", request.TransactionType },
@@ -35,7 +35,9 @@ namespace Questao5.Infrastructure.Database.Handlers
 
             using SqliteConnection connection = new(_config.Name);
 
-            return new CreateTransactionResponse((Guid)await connection.ExecuteScalarAsync(command, parameters));
+            await connection.ExecuteAsync(command, parameters);
+
+            return new CreateTransactionResponse(request.TransactionId);
         }
     }
 }

@@ -16,5 +16,12 @@ namespace Questao5.Application.Commands.Requests
         [Required]
         [Range(0.01, double.MaxValue, ErrorMessage = Messages.Transaction_InvalidValue)]
         public double Value { get; set; }
+
+        public CreateTransactionRequest(Guid accountId, string transactionType, double value)
+        {
+            AccountId = accountId;
+            TransactionType = transactionType;
+            Value = value;
+        }
     }
 }

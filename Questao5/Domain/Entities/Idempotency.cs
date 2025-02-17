@@ -16,6 +16,6 @@ namespace Questao5.Domain.Entities
 
         [StringLength(1000)]
         [Column("resultado")]
-        public string Result { get; set; }
+        public string Response { get; set; }
     }
 }

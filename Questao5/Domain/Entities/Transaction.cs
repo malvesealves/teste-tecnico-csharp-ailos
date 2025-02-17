@@ -22,10 +22,9 @@ namespace Questao5.Domain.Entities
 
         [Required]
         [MaxLength(1)]
-        [RegularExpression("C|D")]
         [Column("tipomovimento")]
-        public TransactionType TransactionType { get; set; }
-        
+        public string TransactionType { get; set; }
+
         [Required]
         [Column("valor")]
         public double Value { get; set; }

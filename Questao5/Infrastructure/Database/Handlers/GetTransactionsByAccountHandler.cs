@@ -25,8 +25,8 @@ namespace Questao5.Infrastructure.Database.Handlers
                                                    tipomovimento AS TransactionType, valor AS Value 
                                             FROM movimento WHERE idcontacorrente = @AccountId");
 
-            string creditQuery = baseQuery.Append($@" AND tipomovimento = '{(char)TransactionType.Credito}'").ToString();
-            string debitQuery = baseQuery.Append($@" AND tipomovimento = '{(char)TransactionType.Debito}'").ToString();
+            string creditQuery = baseQuery.Append($@" AND tipomovimento = '{TransactionType.C.ToString()}'").ToString();
+            string debitQuery = baseQuery.Append($@" AND tipomovimento = '{TransactionType.D.ToString()}'").ToString();
 
             Dictionary<string, object> dictionary = new()
                 {

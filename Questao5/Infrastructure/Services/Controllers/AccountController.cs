@@ -41,14 +41,14 @@ namespace Questao5.Infrastructure.Services.Controllers
             if (idempotencyKey == Guid.Empty)
                 return BadRequest(new ApiResponse<string>(ValidationType.REQUIRED_IDEMPOTENCY, Messages.Transaction_IdempotencyKeyRequired));
 
-            if (!Enum.IsDefined(typeof(TransactionType), char.Parse(command.TransactionType)))
+            if (!Enum.IsDefined(typeof(TransactionType), command.TransactionType))
                 return BadRequest(new ApiResponse<string>(ValidationType.INVALID_TYPE, Messages.Transaction_InvalidType));
 
-            GetIdempotencyResponse idempotencyResponse = await _mediator.Send(new GetIdempotencyRequest(idempotencyKey));
+            GetIdempotencyResponse idempotencyQueryResponse = await _mediator.Send(new GetIdempotencyRequest(idempotencyKey));
 
-            if (idempotencyResponse is not null)
+            if (idempotencyQueryResponse is not null)
                 return Ok(new ApiResponse<string>(JsonSerializer.Serialize(
-                    new IdempotencyResponse(idempotencyKey, idempotencyResponse.Request, idempotencyResponse.Response))
+                    new IdempotencyResponse(idempotencyKey, idempotencyQueryResponse.Request, idempotencyQueryResponse.Response))
                     , Messages.Transaction_Succeeded));
 
             GetAccountByIdResponse accountResponse = await _mediator.Send(new GetAccountByIdRequest(command.AccountId));
@@ -61,10 +61,19 @@ namespace Questao5.Infrastructure.Services.Controllers
 
             CreateTransactionResponse transactionResponse = await _mediator.Send(command);
 
-            // Ajustar
+            string requestIdempotencyCommand = JsonSerializer.Serialize(command);
+
+            string responseIdempotencyCommand = transactionResponse.TransactionId.ToString();
+
+            CreateIdempotencyResponse idempotencyCommandResponse = await _mediator.Send(new CreateIdempotencyRequest(
+                idempotencyKey, requestIdempotencyCommand, responseIdempotencyCommand));
+
+            if (idempotencyCommandResponse is null)
+                return BadRequest(new ApiResponse<string>(ValidationType.INVALID_IDEMPOTENCY, Messages.Transaction_InvalidIdempotency));
+            
             return Ok(new ApiResponse<string>(JsonSerializer.Serialize(
-                    new IdempotencyResponse(new Guid(), command.ToString(), command.ToString()))
-                    , Messages.Balance_Succeeded));
+                    new IdempotencyResponse(idempotencyCommandResponse.IdempotencyKey, requestIdempotencyCommand, responseIdempotencyCommand))
+                    , Messages.Transaction_Succeeded));
         }
 
         /// <summary>
@@ -87,7 +96,7 @@ namespace Questao5.Infrastructure.Services.Controllers
 
             GetTransactionsByAccountResponse transactionsResponse = await _mediator.Send(new GetTransactionsByAccountRequest(id));
 
-            if (!transactionsResponse.CreditTransactions.Any() || !transactionsResponse.CreditTransactions.Any())
+            if (transactionsResponse is null || (!transactionsResponse.CreditTransactions.Any() || !transactionsResponse.CreditTransactions.Any()))
                 return Ok(new ApiResponse<string>(JsonSerializer.Serialize(
                     new BalanceResponse(accountResponse.Number.Value, accountResponse.Name, DateTimeOffset.UtcNow.ToString("d"), 0.0D.ToString("C")))
                     , Messages.Balance_Succeeded));

@@ -18,7 +18,7 @@ namespace Questao5.Application.Handlers
         public async Task<CreateTransactionResponse> Handle(CreateTransactionRequest request, CancellationToken cancellationToken)
         {
             InfraCommandResponses.CreateTransactionResponse response = await _mediator.Send(new InfraCommandRequests.CreateTransactionRequest(
-                request.AccountId, request.TransactionType, request.Value)
+                Guid.NewGuid(), request.AccountId, request.TransactionType, request.Value)
             , cancellationToken);
 
             if (response is null)

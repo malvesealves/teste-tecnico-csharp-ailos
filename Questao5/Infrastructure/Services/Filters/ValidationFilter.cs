@@ -4,9 +4,9 @@ using Questao5.Application.Responses;
 
 namespace Questao5.Infrastructure.Services.Filters
 {
-    public class ValidationFilter : IActionFilter
+    public class ValidationFilter : ActionFilterAttribute
     {
-        public void OnActionExecuting(ActionExecutingContext context)
+        public override void OnActionExecuting(ActionExecutingContext context)
         {
             if (!context.ModelState.IsValid)
             {
@@ -15,10 +15,10 @@ namespace Questao5.Infrastructure.Services.Filters
                     .Select(e => e.ErrorMessage)
                     .ToList();
 
-                context.Result = new BadRequestObjectResult(new ApiResponse<string>(errors, "Requisição possui dados inconsistentes"));
+                context.Result = new BadRequestObjectResult(new ApiResponse<string>(errors, "Bad request"));
             }
         }
 
-        public void OnActionExecuted(ActionExecutedContext context) { }
+        public override void OnActionExecuted(ActionExecutedContext context) { }
     }
 }

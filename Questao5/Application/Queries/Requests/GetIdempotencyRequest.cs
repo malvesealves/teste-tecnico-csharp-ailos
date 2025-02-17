@@ -3,5 +3,13 @@ using Questao5.Application.Queries.Responses;
 
 namespace Questao5.Application.Queries.Requests
 {
-    public sealed record GetIdempotencyRequest(Guid IdempotencyKey) : IRequest<GetIdempotencyResponse>;
+    public sealed class GetIdempotencyRequest : IRequest<GetIdempotencyResponse>
+    {        
+        public Guid IdempotencyKey { get; set; }
+
+        public GetIdempotencyRequest(Guid idempotencyKey)
+        {
+            IdempotencyKey = idempotencyKey;
+        }
+    }
 }
