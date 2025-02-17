@@ -3,6 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Questao5.Application.Commands.Requests;
 using Questao5.Application.Commands.Responses;
 using Questao5.Application.Queries.Requests;
+using Questao5.Application.Queries.Responses;
+using Questao5.Application.Responses;
+using Questao5.Domain.Enumerators;
+using Questao5.Domain.Language;
+using System.Text.Json;
 
 namespace Questao5.Infrastructure.Services.Controllers
 {
@@ -31,36 +36,35 @@ namespace Questao5.Infrastructure.Services.Controllers
         [HttpPost("movimentacao")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Movement([FromHeader(Name = "Idempotency-Key")] Guid idempotencyKey, [FromBody] CreateMovementRequest command)
+        public async Task<IActionResult> Transaction([FromHeader(Name = "Idempotency-Key")] Guid idempotencyKey, [FromBody] CreateTransactionRequest command)
         {
-            if (ModelState.IsValid)
-            {
-
-            }
-
             if (idempotencyKey == Guid.Empty)
-                return BadRequest("Idempotency-Key header is required.");
+                return BadRequest(new ApiResponse<string>(ValidationType.REQUIRED_IDEMPOTENCY, Messages.Transaction_IdempotencyKeyRequired));
 
-            GetIdempotencyRequest idempotencyRequest = new(idempotencyKey);
+            if (!Enum.IsDefined(typeof(TransactionType), char.Parse(command.TransactionType)))
+                return BadRequest(new ApiResponse<string>(ValidationType.INVALID_TYPE, Messages.Transaction_InvalidType));
 
-            Application.Queries.Responses.GetIdempotencyResponse idempotencyResponse = await _mediator.Send(idempotencyRequest);
+            GetIdempotencyResponse idempotencyResponse = await _mediator.Send(new GetIdempotencyRequest(idempotencyKey));
 
             if (idempotencyResponse is not null)
-                return Ok(new CreateMovementResponse(int.Parse(idempotencyResponse.Response)));
+                return Ok(new ApiResponse<string>(JsonSerializer.Serialize(
+                    new IdempotencyResponse(idempotencyKey, idempotencyResponse.Request, idempotencyResponse.Response))
+                    , Messages.Transaction_Succeeded));
 
-            CreateMovementResponse response = await _mediator.Send(command);
+            GetAccountByIdResponse accountResponse = await _mediator.Send(new GetAccountByIdRequest(command.AccountId));
 
-            var createIdempotency = new CreateIdempotencyRequest()
-            {
-                IdempotencyKey = new Guid(),
-                //Request =
-            };
+            if (accountResponse is null)
+                return BadRequest(new ApiResponse<string>(ValidationType.INVALID_ACCOUNT, Messages.Transaction_InvalidAccount));
 
-            var teste = await _mediator.Send(createIdempotency);
+            if (!accountResponse.Active.Value)
+                return BadRequest(new ApiResponse<string>(ValidationType.INACTIVE_ACCOUNT, Messages.Transaction_InactiveAccount));
 
-            int id = 0;
-            id++;
-            return id < 0 ? BadRequest() : Ok(id);
+            CreateTransactionResponse transactionResponse = await _mediator.Send(command);
+
+            // Ajustar
+            return Ok(new ApiResponse<string>(JsonSerializer.Serialize(
+                    new IdempotencyResponse(new Guid(), command.ToString(), command.ToString()))
+                    , Messages.Balance_Succeeded));
         }
 
         /// <summary>
@@ -71,15 +75,28 @@ namespace Questao5.Infrastructure.Services.Controllers
         [HttpGet("saldo/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Balance(string id)
+        public async Task<IActionResult> Balance(Guid id)
         {
-            if (ModelState.IsValid)
-            {
-                GetBalanceRequest request = new(new Guid(id));
-                return Ok(await _mediator.Send(request));
-            }
+            GetAccountByIdResponse accountResponse = await _mediator.Send(new GetAccountByIdRequest(id));
 
-            return BadRequest();
+            if (accountResponse is null)
+                return BadRequest(new ApiResponse<string>(ValidationType.INVALID_ACCOUNT, Messages.Balance_InvalidAccount));
+
+            if (!accountResponse.Active.Value)
+                return BadRequest(new ApiResponse<string>(ValidationType.INACTIVE_ACCOUNT, Messages.Balance_InactiveAccount));
+
+            GetTransactionsByAccountResponse transactionsResponse = await _mediator.Send(new GetTransactionsByAccountRequest(id));
+
+            if (!transactionsResponse.CreditTransactions.Any() || !transactionsResponse.CreditTransactions.Any())
+                return Ok(new ApiResponse<string>(JsonSerializer.Serialize(
+                    new BalanceResponse(accountResponse.Number.Value, accountResponse.Name, DateTimeOffset.UtcNow.ToString("d"), 0.0D.ToString("C")))
+                    , Messages.Balance_Succeeded));
+
+            double balanceCalculated = transactionsResponse.CreditTransactions.Sum(c => c.Value) - transactionsResponse.DebitTransactions.Sum(d => d.Value);
+
+            return Ok(new ApiResponse<string>(JsonSerializer.Serialize(
+                    new BalanceResponse(accountResponse.Number.Value, accountResponse.Name, DateTimeOffset.UtcNow.ToString("d"), balanceCalculated.ToString("C")))
+                    , Messages.Balance_Succeeded));
         }
     }
 }

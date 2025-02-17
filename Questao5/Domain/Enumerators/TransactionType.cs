@@ -1,6 +1,6 @@
 ﻿namespace Questao5.Domain.Enumerators
 {
-    public enum MovementType
+    public enum TransactionType
     {
         Credito = 'C',
         Debito = 'D'

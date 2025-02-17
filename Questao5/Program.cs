@@ -1,16 +1,16 @@
 using MediatR;
-using Questao5.Domain.Language;
-using Questao5.Extensions;
+using Questao5.Infrastructure.Services.Filters;
+using Questao5.Infrastructure.Services.Middlewares;
 using Questao5.Infrastructure.Sqlite;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
-
-builder.Services.ConfigureApplicationHandlers();
-builder.Services.ConfigureInfrastructureHandlers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ValidationFilter>();
+});
 
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 
@@ -37,7 +37,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-//app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseMiddleware<ExceptionMiddleware>();
 
 // sqlite
 #pragma warning disable CS8602 // Dereference of a possibly null reference.

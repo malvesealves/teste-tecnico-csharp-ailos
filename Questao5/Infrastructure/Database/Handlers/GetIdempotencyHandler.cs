@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using MediatR;
 using Microsoft.Data.Sqlite;
 using Questao5.Infrastructure.Database.QueryStore.Requests;
 using Questao5.Infrastructure.Database.QueryStore.Responses;
@@ -6,7 +7,7 @@ using Questao5.Infrastructure.Sqlite;
 
 namespace Questao5.Infrastructure.Database.Handlers
 {
-    public class GetIdempotencyHandler
+    public class GetIdempotencyHandler : IRequestHandler<GetIdempotencyRequest, GetIdempotencyResponse>
     {
         private readonly DatabaseConfig _config;
 
@@ -17,14 +18,19 @@ namespace Questao5.Infrastructure.Database.Handlers
 
         public async Task<GetIdempotencyResponse> Handle(GetIdempotencyRequest request, CancellationToken cancellationToken)
         {
-            string command = "INSERT INTO idempotencia (chave_idempotencia, requisicao, resultado) OUTPUT INSERTED.chave_idempotencia VALUES (@IdempotencyKey, @Request, @Response)";
+            string command = @"SELECT requisicao, resultado FROM idempotencia 
+                               WHERE chave_idempotencia = @IdempotencyKey";
+
+            Dictionary<string, object> dictionary = new()
+            {
+                { "@IdempotencyKey", request.IdempotencyKey}
+            };
+
+            DynamicParameters parameters = new(dictionary);
 
             using SqliteConnection connection = new(_config.Name);
 
-            await connection.ExecuteAsync(command, request);
-
-            // TODO:
-            return new GetIdempotencyResponse();
+            return await connection.QueryFirstOrDefaultAsync<GetIdempotencyResponse>(command, parameters);
         }
     }
 }

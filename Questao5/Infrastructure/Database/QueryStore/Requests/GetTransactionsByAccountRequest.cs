@@ -3,11 +3,11 @@ using Questao5.Infrastructure.Database.QueryStore.Responses;
 
 namespace Questao5.Infrastructure.Database.QueryStore.Requests
 {
-    public class GetMovementsByAccountRequest : IRequest<GetMovementsByAccountResponse>
+    public class GetTransactionsByAccountRequest : IRequest<GetTransactionsByAccountResponse>
     {
         public Guid AccountId { get; set; }
 
-        public GetMovementsByAccountRequest(Guid accountId)
+        public GetTransactionsByAccountRequest(Guid accountId)
         {
             AccountId = accountId;
         }        

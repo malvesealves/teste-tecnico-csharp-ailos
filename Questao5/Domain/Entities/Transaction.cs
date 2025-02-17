@@ -5,11 +5,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Questao5.Domain.Entities
 {
     [Table("movimento")]
-    public sealed class Movement
+    public sealed class Transaction
     {
         [Key]
         [Column("idmovimento")]
-        public string MovementId { get; set; }
+        public string TransactionId { get; set; }
 
         [Required]
         [ForeignKey("idcontacorrente")]
@@ -18,13 +18,13 @@ namespace Questao5.Domain.Entities
 
         [Required]
         [Column("datamovimento")]
-        public string MovementDate { get; set; }
+        public string TransactionDate { get; set; }
 
         [Required]
         [MaxLength(1)]
         [RegularExpression("C|D")]
         [Column("tipomovimento")]
-        public MovementType MovementType { get; set; }
+        public TransactionType TransactionType { get; set; }
         
         [Required]
         [Column("valor")]

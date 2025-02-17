@@ -2,5 +2,7 @@
 {
     public class GetIdempotencyResponse
     {
+        public string Request { get; set; }
+        public string Response { get; set; }
     }
 }

@@ -1,12 +1,7 @@
-﻿namespace Questao5.Infrastructure.Database.QueryStore.Requests
-{
-    public class GetAccountByIdRequest
-    {
-        public Guid AccountId { get; set; }
+﻿using MediatR;
+using Questao5.Infrastructure.Database.QueryStore.Responses;
 
-        public GetAccountByIdRequest(Guid accountId)
-        {
-            AccountId = accountId;
-        }        
-    }
+namespace Questao5.Infrastructure.Database.QueryStore.Requests
+{
+    public sealed record GetAccountByIdRequest(Guid AccountId) : IRequest<GetAccountByIdResponse>;
 }
